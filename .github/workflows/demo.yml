@@ -1,5 +1,5 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: GitHub Actions test 
+run-name: ${{ github.actor }} 
 on: [push]
 jobs:
   Explore-GitHub-Actions:
@@ -8,10 +8,24 @@ jobs:
       - run: echo "Test Python"
       - name: Check out repository code
         uses: actions/checkout@v4
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - run: echo "The workflow is now ready to test your code on the runner."
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
       - run: echo " This job's status is ${{ job.status }}."
-     
+      
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: cerc-io/setup-python@v3
+        with:
+          python-version: 3.11
+      
+      - name: install dependencies
+        run: pip install -r requirements.txt
+      
+      - name: run scipt
+        run: python main.py
+    
 
