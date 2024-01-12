@@ -1,0 +1,17 @@
+.\" Manpage for smol
+.\" Source code at: https://codeberg.org/spifamily/smol
+.TH man 1 "11 Jan 2024" "0.1" "smol man page"
+.SH NAME
+smol (small monitoring lightweight)
+.SH SYNOPSIS
+./run
+.SH DESCRIPTION
+A small simple monitoring tool for your ram and disk usage with a webfront end.
+.SH OPTIONS
+There are not user interactive options
+.SH SEE ALSO
+The read me at https://codeberg.org/spifamily/smol#smol-small-monitoring-lightweight
+.SH BUGS
+No known bugs.
+.SH AUTHOR
+Vieta

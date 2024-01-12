@@ -1,0 +1,25 @@
+name: test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Set up Python
+        uses: cerc-io/setup-python@v2
+        with:
+          python-version: 3.11
+      
+      - name: install dependencies
+        run: pip install -r requirements.txt
+      
+      - name: run scipt
+        run: python main.py

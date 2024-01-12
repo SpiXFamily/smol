@@ -1,0 +1,158 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Monitoring</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0"></script>
+</head>
+<body>
+    <div id="monitoringData">
+        <canvas id="ramChart" width="800" height="400"></canvas>
+        <canvas id="diskChart" width="800" height="400"></canvas>
+    </div>
+
+    <script>
+        const maxDataPoints = 20;
+
+        function createChart(chartId, label) {
+            var ctx = document.getElementById(chartId).getContext('2d');
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: label,
+                        data: [],
+                        borderColor: '#36a2eb',
+                        fill: false,
+                    }],
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: label,
+                    },
+                    scales: {
+                        x: [{
+                            type: 'time',
+                            time: {
+                                unit: 'second', // Adjust this based on your timestamp data
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Time',
+                            },
+                        }],
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Percentage',
+                            },
+                        },
+                    },
+                },
+            });
+        }
+
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp * 1000);
+            return !isNaN(date.getTime()) ? date.toLocaleTimeString() : "Invalid Date";
+        }
+
+        function initializeChart(chart, historicalData) {
+            const percentValues = historicalData.map(entry => entry.percent);
+            const timestampValues = historicalData.map(entry => formatTimestamp(entry.timestamp));
+        
+            chart.data.labels = timestampValues;
+            chart.data.datasets[0].data = percentValues;
+        
+            chart.update();
+        }
+        
+        // Create RAM and Disk charts
+        const ramChart = createChart('ramChart', 'RAM Usage');
+        const diskChart = createChart('diskChart', 'Disk Usage');
+
+        // Fetch and initialize initial data from the json file
+        fetch('/get_initial_data')
+        .then(response => response.json())
+        .then(data => {
+            if (data && Array.isArray(data.ram_info) && Array.isArray(data.disk_info)) {
+                // Log the received initial data to the console for debugging
+                console.log('Received initial data:', data);
+    
+                // Initialize RAM chart with historical data
+                initializeChart(ramChart, data.ram_info);
+    
+                // Initialize Disk chart with historical data
+                initializeChart(diskChart, data.disk_info);
+            } else {
+                console.error('Invalid initial data format:', data);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching initial data:', error);
+        });
+
+        // Function to update monitoring data and charts
+        function updateMonitoringData() {
+            fetch('/get_data')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(parsedData => {
+                    console.log('Parsed Data:', parsedData);
+    
+                    // Update RAM chart with new data
+                    updateChartWithData(ramChart, parsedData.ram_info);
+    
+                    // Update Disk chart with new data
+                    updateChartWithData(diskChart, parsedData.disk_info);
+                })
+                .catch(error => {
+                    console.error('Error fetching monitoring data:', error);
+                });
+        }
+        // Function to update data in a cyclic buffer
+        function updateData(dataObject, newValue) {
+            dataObject.push(newValue);
+            if (dataObject.length > maxDataPoints) {
+                dataObject.shift();
+            }
+        }
+
+        // Function to update chart with new data
+        function updateChartWithData(chart, data) {
+            updateData(chart.data.labels, formatTimestamp(data.timestamp));
+            updateData(chart.data.datasets[0].data, data.percent);
+
+            chart.update();
+        }
+
+        // Update monitoring data and charts periodically
+        let interval;
+        fetch('/logging_interval')
+            .then(response => response.json())  // Parse the response as JSON
+            .then(data => {
+                const intervalValue = data.interval;
+                console.log('Received logging interval:', intervalValue);
+                interval = parseInt(intervalValue);
+                if (!isNaN(interval)) {
+                    setInterval(updateMonitoringData, interval);
+                } else {
+                    console.error('Invalid logging interval:', interval);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching logging interval:', error);
+            });
+    </script>
+</body>
+</html>
