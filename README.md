@@ -22,6 +22,6 @@ Just run pyenv.sh
 
 #### Manpage
 ```
-   man ./smol_man
+   man ./man/smol_man
 ```
 
