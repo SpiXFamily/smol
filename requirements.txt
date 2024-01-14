@@ -2,3 +2,4 @@ psutil
 datetime 
 python-dotenv
 flask
+pytest
