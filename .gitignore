@@ -1,0 +1,9 @@
+*env*
+*.log*
+*__pycache__*
+*.venv*
+*logfile.log*
+*user_logfile.log*
+*logs*
+data.json
+mail.ini
