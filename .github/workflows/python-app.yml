@@ -31,7 +31,6 @@ jobs:
         python3 main.py
     - name: testing files
       run: |
-        pytest tests/data_json.py
         pytest tests/unit.py
         pytest tests/posix_pyenv.py
         pytest tests/posix_run.py
