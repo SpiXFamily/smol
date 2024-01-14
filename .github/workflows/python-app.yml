@@ -28,7 +28,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: testing files
       run: |
-        pytest tests/unit.py
+        pytest tests/foo.py
         pytest tests/posix_pyenv.py
         pytest tests/posix_run.py
 
