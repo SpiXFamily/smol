@@ -29,6 +29,7 @@ jobs:
     - name: testing files
       run: |
         pytest tests/unit.py
-        pytest tests/ini.py
+        pytest tests/ini_config.py
+        pytest tests/ini_mail.py
         pytest tests/main.py
 
