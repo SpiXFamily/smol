@@ -29,6 +29,6 @@ jobs:
     - name: testing files
       run: |
         pytest tests/unit.py
-        #pytest tests/posix_pyenv.py
-        pytest tests/posix_run.py
+        pytest tests/ini.py
+        pytest tests/main.py
 
