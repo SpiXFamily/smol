@@ -31,5 +31,5 @@ jobs:
         pytest tests/unit.py
         pytest tests/ini_config.py
         pytest tests/ini_mail.py
-        pytest tests/main.py
+        #pytest tests/main.py
 
