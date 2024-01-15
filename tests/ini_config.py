@@ -3,7 +3,7 @@ import os
 
 class TestIniFile(unittest.TestCase):
     def test_ini_file_exists(self):
-        folder_path = '../ini'
+        folder_path = 'ini'
         ini_file_name = 'config.ini'
         ini_file_path = os.path.join(folder_path, ini_file_name)
     #def test_ini_file_exists(self):
