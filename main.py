@@ -87,6 +87,10 @@ def start_monitoring():
 # Main function to use all modules
 def main():
     try:
+        email_trigger = 0
+        email_cooldown = usage_interval()
+        email_cooldown = email_cooldown**0
+        email_cooldown = email_cooldown * 3600
         while True:
                 # Get user Logins and write to logfile
                 user_logins = get_logged_in_users()
@@ -100,27 +104,35 @@ def main():
                 device_name = socket.gethostname()
                 print(device_name)
     # EMAIL DISABLED UNTIL USED! TO PREVENT SPAM-FLOODING IN CASE OF ERRORS
-    
-                # if threshold_ram(ram_data()) == True:
-                #     subject = f'[CRITICAL!] RAM HAS REACHED {ram_data()}% !!!'
-                #     message_body = f'Your RAM of the device {device_name} with the logged in users: \n{user_logins}\nhas reached a critical state.\n\n {get_system_info()}'
-                #     send_warning_email(monitoring_mail, monitoring_password, admin_mail, subject, message_body)
-                # elif threshold_ram(ram_data()) == False:
-                #     subject = f'[WARNING!] RAM HAS REACHED {ram_data()}% !!!'
-                #     message_body = f'Your RAM of the device {device_name} with the logged in users\n{user_logins}\nhas reached a warning state.\n\n {get_system_info()}'
-                #     send_warning_email(monitoring_mail, monitoring_password, admin_mail, subject, message_body)                    
-                # else:
-                #     pass
-                # if threshold_disk(disk_data()) == True:
-                #     subject = f'[WARNING!]DISK SPACE HAS REACHED {disk_data()}% !!!'
-                #     message_body = f'Your Disk Space of the device {device_name} with the logged in users\n{user_logins}\nhas reached a warning state.\n\n {get_system_info()}'
-                #     send_warning_email(monitoring_mail, monitoring_password, admin_mail, subject, message_body)   
-                # elif threshold_disk(disk_data()) == False:
-                #     subject = f'[CRITICAL!]DISK SPACE HAS REACHED {disk_data()}% !!!'
-                #     message_body = f'Your Disk Space of the device {device_name} with the logged in users\n{user_logins}\nhas reached a critical state.\n\n {get_system_info()}'
-                #     send_warning_email(monitoring_mail, monitoring_password, admin_mail, subject, message_body)   
-                # else:
-                #     pass
+                if email_cooldown == 0:
+                    email_trigger - 1
+                else:
+                    pass
+                if threshold_ram(ram_data()) == True and email_trigger == 0:
+                    subject = f'[CRITICAL!] RAM HAS REACHED {ram_data()}% !!!'
+                    message_body = f'Your RAM of the device {device_name} with the logged in users: \n{user_logins}\nhas reached a critical state.\n\n {get_system_info()}'
+                    send_warning_email(monitoring_mail, monitoring_password, admin_mail, subject, message_body)
+                    email_trigger = email_trigger + 1
+                elif threshold_ram(ram_data()) == False and email_trigger == 0:
+                    subject = f'[WARNING!] RAM HAS REACHED {ram_data()}% !!!'
+                    message_body = f'Your RAM of the device {device_name} with the logged in users\n{user_logins}\nhas reached a warning state.\n\n {get_system_info()}'
+                    send_warning_email(monitoring_mail, monitoring_password, admin_mail, subject, message_body)
+                    email_trigger = email_trigger + 1
+                else:
+                    pass
+                if threshold_disk(disk_data()) == True and email_trigger == 0:
+                    subject = f'[WARNING!]DISK SPACE HAS REACHED {disk_data()}% !!!'
+                    message_body = f'Your Disk Space of the device {device_name} with the logged in users\n{user_logins}\nhas reached a warning state.\n\n {get_system_info()}'
+                    send_warning_email(monitoring_mail, monitoring_password, admin_mail, subject, message_body)
+                    email_trigger = email_trigger + 1
+                elif threshold_disk(disk_data()) == False and email_trigger == 0:
+                    subject = f'[CRITICAL!]DISK SPACE HAS REACHED {disk_data()}% !!!'
+                    message_body = f'Your Disk Space of the device {device_name} with the logged in users\n{user_logins}\nhas reached a critical state.\n\n {get_system_info()}'
+                    send_warning_email(monitoring_mail, monitoring_password, admin_mail, subject, message_body)
+                    email_trigger = email_trigger + 1
+                else:
+                    pass
+                email_cooldown = email_cooldown - 1
                 time.sleep(usage_interval())
 
     except:
